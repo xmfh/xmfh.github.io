@@ -1,0 +1,711 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="背景在ＴＦＳ的日常任务管理中，　用户故事的分配方式不一，创建人不一。　有的没有标出故事点，有点一个故事中有个任务，每个任务又有不同的人在执行。　造成通过看板很难对工作情况有一个正确的了解。
+目标
+通过TFS的kanban能够直接看出来每个人的工作安排。手上还有多少个功能点需要处理， 相同的任务进行合并。
+能通过kanban 对开发日期进行大致的估算。
+通过WIP限制流入板中的工作，不在实现TODO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TFS中的用户故事如何进行管理">
+<meta property="og:url" content="http://yoursite.com/2017/03/30/TFS中的用户故事如何进行管理/index.html">
+<meta property="og:site_name" content="Power.Li Coder">
+<meta property="og:description" content="背景在ＴＦＳ的日常任务管理中，　用户故事的分配方式不一，创建人不一。　有的没有标出故事点，有点一个故事中有个任务，每个任务又有不同的人在执行。　造成通过看板很难对工作情况有一个正确的了解。
+目标
+通过TFS的kanban能够直接看出来每个人的工作安排。手上还有多少个功能点需要处理， 相同的任务进行合并。
+能通过kanban 对开发日期进行大致的估算。
+通过WIP限制流入板中的工作，不在实现TODO">
+<meta property="og:image" content="http://yoursite.com/./../images/便民咨询用户故事地图.png">
+<meta property="og:image" content="http://yoursite.com/./../images/2017-03-29-14-15-55.jpg">
+<meta property="og:updated_time" content="2017-03-30T09:45:39.468Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TFS中的用户故事如何进行管理">
+<meta name="twitter:description" content="背景在ＴＦＳ的日常任务管理中，　用户故事的分配方式不一，创建人不一。　有的没有标出故事点，有点一个故事中有个任务，每个任务又有不同的人在执行。　造成通过看板很难对工作情况有一个正确的了解。
+目标
+通过TFS的kanban能够直接看出来每个人的工作安排。手上还有多少个功能点需要处理， 相同的任务进行合并。
+能通过kanban 对开发日期进行大致的估算。
+通过WIP限制流入板中的工作，不在实现TODO">
+<meta name="twitter:image" content="http://yoursite.com/./../images/便民咨询用户故事地图.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/30/TFS中的用户故事如何进行管理/"/>
+
+
+
+
+
+  <title> TFS中的用户故事如何进行管理 | Power.Li Coder </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Power.Li Coder</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">产品和开发之间徘徊</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/30/TFS中的用户故事如何进行管理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhen.li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Power.Li Coder">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                TFS中的用户故事如何进行管理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-30T17:45:39+08:00">
+                2017-03-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>在ＴＦＳ的日常任务管理中，　用户故事的分配方式不一，创建人不一。　有的没有标出故事点，有点一个故事中有个任务，每个任务又有不同的人在执行。　造成通过看板很难对工作情况有一个正确的了解。</p>
+<h1 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h1><ul>
+<li>通过TFS的kanban能够直接看出来每个人的工作安排。手上还有多少个功能点需要处理， 相同的任务进行合并。</li>
+<li>能通过kanban 对开发日期进行大致的估算。</li>
+<li>通过WIP限制流入板中的工作，不在实现TODO版，所有加入看板中的，都应该是要解决要处理的问题。</li>
+<li>板中不在记录堆积工作，如果bug近期不能修复，就应该关闭，转入Tower等看板中进行堆积记录。</li>
+<li>用户故事不宜过大，最长的故事点不能超过5， 否则不利于测试人员进行快速测试。</li>
+</ul>
+<h1 id="从用户故事地图进行分解"><a href="#从用户故事地图进行分解" class="headerlink" title="从用户故事地图进行分解"></a>从用户故事地图进行分解</h1><p>用户故事地图通过分离迭代的方式，可以将所有的故事按照优先级进行分类。 通常我们发布产品版本时都要经过4周以上的的时间， 按照双周迭代来进行计算，也要经过两个迭代周期才能进行发布。</p>
+<p><img src="./../images/便民咨询用户故事地图.png" alt=""><br>便民咨询多级分类中的用户故事地图<br>首先应该评估每个故事大概所需要的时间， 最好能够将一个Relase下的故事，在同一个周期内进行交付，尽量避免因为某个故事特别难做，而延误所有故事的交付周期。<br>例如：</p>
+<blockquote>
+<p>创建一级信箱 和 创建二级信箱，虽然是分开了两个故事，但做起来两个合并1个故事点就够了，那么不应该再进行分离。</p>
+</blockquote>
+<p>根据所有故事的估算点，合理的安排人员的故事进行开发。<br>例如：便民咨询中可能总共估计出8个故事点， 安排两名开发同时开发 1周之内可以交付。那么大致产生的用户故事情况。就是</p>
+<ul>
+<li>多级信箱管理 （故事点4）[开发人员A]<ul>
+<li>创建信箱</li>
+<li>归档信箱</li>
+<li>查看信箱中的信件</li>
+<li>…</li>
+</ul>
+</li>
+<li>信箱前台视图模板API调整（故事点2）[开发人员B]</li>
+<li>信件流程调整及前台视图显示规则调整（故事点2）[开发人员B]</li>
+</ul>
+<h1 id="列"><a href="#列" class="headerlink" title="列"></a>列</h1><p>列默认就是四个。</p>
+<ul>
+<li>story 所有确认要处理的工作都放在Story中，并且story中的用户故事不应堆积的过多，这样也不容易监管，都是应该确认在本次迭代就要进行开发的功能。其他不确定是否本次迭代开发的功能，都应该堆积再Tower的 本版本预计开发功能中。  根据迭代进展情况，再来确认是否将情景从Tower中移动到TFS的看板上。WIP的限制：开发人员的人数</li>
+</ul>
+<p><img src="./../images/2017-03-29-14-15-55.jpg" alt=""></p>
+<ul>
+<li><p>活动 ，开发人员应该时刻都有“活动”的情景，否则是代表没有任何的工作再进行处理。 WIP的限制：开发人员的人数</p>
+<blockquote>
+<p>活动进入测试前，应当召集相关人员进行演示， 通过演示时，对需求及功能进行评价。 功能开发合格，才可以转入测试阶段，否则应该由开发人员记录演示评价问题，修复开发是存在的问题。</p>
+</blockquote>
+</li>
+<li><p>测试，所有开发完成的功能都进入到测试，测试的人员应该指定为测试组的成员，如果是代码部分的则有研发经理来确认情景是否能够测试通过。测试中出现问题的，则由测试人员创建Bug，安排开发人员进行修复。 情景不再重新置为活动。<br>测试人员创建的Bug， 应该与用户情景相关联。便于统计用户情景的最终完成质量。</p>
+</li>
+<li>记录所有关闭的bug和用户情景。</li>
+</ul>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
+<li>每周五对本周开发的情况进行汇总。 重新规划下周的开发计划，安排下周相关里程碑的会议等事项。</li>
+<li>每日站会， 对工作情况快速进行交流，保证工作中产生的问题不会耽误太长的时间，和团队中的成员能够保持一致的步伐。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/codereview/" rel="prev" title="Code Reveiw">
+                Code Reveiw <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zhen.li" />
+          <p class="site-author-name" itemprop="name">zhen.li</p>
+           
+              <p class="site-description motion-element" itemprop="description">在产品和开发之间徘徊的老男人</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#目标"><span class="nav-number">2.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#从用户故事地图进行分解"><span class="nav-number">3.</span> <span class="nav-text">从用户故事地图进行分解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#列"><span class="nav-number">4.</span> <span class="nav-text">列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">4.1.</span> <span class="nav-text">其他</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhen.li</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,743 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="一直以来代码走查的效果都很不理想， 如何有效的提高代码的质量。 网上都在说Code Review，如何真正的吧Code Review落地呢？
+目标
+提高代码质量
+提前发现bug
+使代码遵循团队开发规范
+找到代码中实现比较复杂的地方，便于框架改进。
+
+在《谷歌是如果做代码审查的》一文中的描述：
+
+代码审查的最大的功用是纯社会性的。如果你在编程，而且知道将会有同事检查你的代码，你编程态度就完全不一样了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Code Reveiw">
+<meta property="og:url" content="http://yoursite.com/2017/03/30/codereview/index.html">
+<meta property="og:site_name" content="Power.Li Coder">
+<meta property="og:description" content="一直以来代码走查的效果都很不理想， 如何有效的提高代码的质量。 网上都在说Code Review，如何真正的吧Code Review落地呢？
+目标
+提高代码质量
+提前发现bug
+使代码遵循团队开发规范
+找到代码中实现比较复杂的地方，便于框架改进。
+
+在《谷歌是如果做代码审查的》一文中的描述：
+
+代码审查的最大的功用是纯社会性的。如果你在编程，而且知道将会有同事检查你的代码，你编程态度就完全不一样了">
+<meta property="og:updated_time" content="2017-03-30T09:45:39.474Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Code Reveiw">
+<meta name="twitter:description" content="一直以来代码走查的效果都很不理想， 如何有效的提高代码的质量。 网上都在说Code Review，如何真正的吧Code Review落地呢？
+目标
+提高代码质量
+提前发现bug
+使代码遵循团队开发规范
+找到代码中实现比较复杂的地方，便于框架改进。
+
+在《谷歌是如果做代码审查的》一文中的描述：
+
+代码审查的最大的功用是纯社会性的。如果你在编程，而且知道将会有同事检查你的代码，你编程态度就完全不一样了">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/30/codereview/"/>
+
+
+
+
+
+  <title> Code Reveiw | Power.Li Coder </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Power.Li Coder</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">产品和开发之间徘徊</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/30/codereview/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhen.li">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Power.Li Coder">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Code Reveiw
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-30T17:45:39+08:00">
+                2017-03-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>一直以来代码走查的效果都很不理想， 如何有效的提高代码的质量。 网上都在说Code Review，如何真正的吧Code Review落地呢？</p>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>提高代码质量</li>
+<li>提前发现bug</li>
+<li>使代码遵循团队开发规范</li>
+<li>找到代码中实现比较复杂的地方，便于框架改进。</li>
+</ul>
+<p>在《谷歌是如果做代码审查的》一文中的描述：</p>
+<blockquote>
+<p>代码审查的最大的功用是纯社会性的。如果你在编程，而且知道将会有同事检查你的代码，你编程态度就完全不一样了。你写出的代码将更加整洁，有更好的注释，更好的程序结构——因为你知道，那个你很在意的人将会查看你的程序。</p>
+</blockquote>
+<p>人的心态是这样， 我代码写的很差，如果让其他同事看到，那么其他同事肯定会觉得我这个人编码能力很差。而另外一方面还可以培养程序员对代码的阅读能力。毕竟如果看多了<strong>坏味道</strong>的代码，一看好代码，马上就会知道，自己的代码应该写成这样更好。</p>
+<blockquote>
+<p>还有一个非常重要的好处。代码审查能传播知识。在很多的开发团队里，经常每一个人负责一个核心模块，每个人都只关注他自己的那个模块。除非是同事的模块影响了自己的程序，他们从不相互交流。</p>
+</blockquote>
+<p>系统框架中很多核心的用法，以及很多技巧是无法通过培训来完全覆盖到的，通过代码走查可以让其他同事了解这部分的内容，也可以对以后的功能业务逻辑进行了解。</p>
+<h3 id="提高代码质量"><a href="#提高代码质量" class="headerlink" title="提高代码质量"></a>提高代码质量</h3><ul>
+<li>有可能引起性能的查询问题。</li>
+<li>是否会创建大量的线程，造成服务器卡死。</li>
+<li>是否存在并发的问题。</li>
+<li>Magic Numbers</li>
+</ul>
+<h3 id="提前发现Bug"><a href="#提前发现Bug" class="headerlink" title="提前发现Bug"></a>提前发现Bug</h3><ul>
+<li>是否存在写死的后台路径，或者上传路径等，根据系统配置的可变化值。</li>
+<li>业务逻辑可能存在的问题。</li>
+<li>调用的方法不正确，或有更好的调用方式。</li>
+</ul>
+<h3 id="遵循团队开发规范"><a href="#遵循团队开发规范" class="headerlink" title="遵循团队开发规范"></a>遵循团队开发规范</h3><ul>
+<li>C# Style Guide：StackOverflow 上的C#风格指南 Q &amp; A。-<a href="http://stackoverflow.com/questions/4678178/style-guide-for-c" target="_blank" rel="external">官网</a>。</li>
+<li>C# Coding Conventions：MSDN 官方的 C# 代码约定。-<a href="https://msdn.microsoft.com/en-us/library/ff926074.aspx" target="_blank" rel="external">官网</a>。</li>
+<li>尽量遵循Resharper给出的建议。</li>
+<li>能够通过StyleCop检查。</li>
+<li>HTML的命名 应该遵循<code>BEM</code>命名规范。 （不确定，但实践下来感觉这种规范可实施性上是最强的）。</li>
+<li>js 最低标准是使用严格模式，尽量通过jsHint的检查。</li>
+</ul>
+<h3 id="框架改进"><a href="#框架改进" class="headerlink" title="框架改进"></a>框架改进</h3><p>开发人员不会每次都报告框架哪里比较难用， 经常使用很多奇淫巧技来处理问题。但开发中出现的各种问题，或者比较复杂的业务逻辑，正是框架应该进行处理的部分。 </p>
+<h2 id="范围"><a href="#范围" class="headerlink" title="范围"></a>范围</h2><p>每次检查的的范围是多少， 是按照迭代来进行走查，还是应该模块完成后进行走查？ 所有的代码是否都要经过组长或者他人评审才迁入？</p>
+<ul>
+<li><p>正常来说应该某个功能模块的迭代周期结束后，可以进行<code>CodeReview</code>，如果各组相互交叉，从理论上来说，能够覆盖的面积是最大的，但从单个的执行效果上来讲反而是最差的。在执行时，应该可以交叉走查和重点走查相结合的方式。 单周交叉走查，双周重点走查。 以解决很多代码组长基本没有时间审核的问题。</p>
+</li>
+<li><p>所有的代码是否都要经过组长或者他人评审才迁入？<br>  作为TFS中进行操作，暂时还是没有所有的功能模块都进行分支开发的。 一来比较占用空间，二来合并时也比较麻烦，所以不存在向主版本进行推送的问题。 而现在TFS的签入策略 中也没有必须经过代码评审的过程。</p>
+</li>
+</ul>
+<h2 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h2><p>Code Review中主要的问题 ，就是要在代码上做评论， 之后还要能追溯到代码修改后的状态。 所有要修改的代码是否确实有效的进行了调整。网上的一些代码审核工具：</p>
+<ul>
+<li>Gerrit</li>
+<li>TFS中的代码审核。</li>
+<li>Phabricator</li>
+</ul>
+<p>Greeit是基于Git的，跟我们现在的TFS托管代码的环境还是不太一样，上手成本太高，暂时补考虑。<br>Phabricator 网上的反应都不错，但是相对来说成本较高。 代码审核本身是个过程，如果过分的追逐工具，反而本末倒置。</p>
+<h3 id="其他的质量工具"><a href="#其他的质量工具" class="headerlink" title="其他的质量工具"></a>其他的质量工具</h3><ul>
+<li>jshint</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="http://www.vaikan.com/things-everyone-should-do-code-review/" target="_blank" rel="external">Google是如果做代码审查的</a></li>
+<li><a href="http://www.cnblogs.com/mindwind/p/5639008.html" target="_blank" rel="external">Code Review 程序员的寄望与哀伤</a></li>
+<li><a href="http://www.cnblogs.com/wenhx/p/How-We-Code-Review.html" target="_blank" rel="external">我们是怎么做CodeReview的</a></li>
+<li><a href="https://www.zhihu.com/topic/19668200/hot" target="_blank" rel="external">知乎CodeReview热门话题</a></li>
+<li><a href="https://www.zhihu.com/question/41089988" target="_blank" rel="external">大家的公司的code review都是怎么做的？遇到过什么问题么？</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/30/TFS中的用户故事如何进行管理/" rel="next" title="TFS中的用户故事如何进行管理">
+                <i class="fa fa-chevron-left"></i> TFS中的用户故事如何进行管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/代码审查的问题/" rel="prev" title="代码审查中存在的问题">
+                代码审查中存在的问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="zhen.li" />
+          <p class="site-author-name" itemprop="name">zhen.li</p>
+           
+              <p class="site-description motion-element" itemprop="description">在产品和开发之间徘徊的老男人</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#目标"><span class="nav-number">1.</span> <span class="nav-text">目标</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#提高代码质量"><span class="nav-number">1.1.</span> <span class="nav-text">提高代码质量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提前发现Bug"><span class="nav-number">1.2.</span> <span class="nav-text">提前发现Bug</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遵循团队开发规范"><span class="nav-number">1.3.</span> <span class="nav-text">遵循团队开发规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#框架改进"><span class="nav-number">1.4.</span> <span class="nav-text">框架改进</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#范围"><span class="nav-number">2.</span> <span class="nav-text">范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tools"><span class="nav-number">3.</span> <span class="nav-text">Tools</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#其他的质量工具"><span class="nav-number">3.1.</span> <span class="nav-text">其他的质量工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhen.li</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
